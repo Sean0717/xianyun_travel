@@ -107,7 +107,9 @@ export default {
           let {password2,...resForm}=this.form
           console.log(resForm);
           this.$axios.post('/accounts/register',resForm)
-          .then(res=>console.log(res))
+          .then(res=>{
+            this.$router.push('/user/login/0')
+          })
 
         }else{
           console.log('输入不合法')

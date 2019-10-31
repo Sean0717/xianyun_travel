@@ -10,6 +10,7 @@
         <nuxt-link class="pages_item" to="/hotel">酒店</nuxt-link>
         <nuxt-link class="pages_item" to="/air">国内机票</nuxt-link>
       </div>
+
       <div class="main_login">
         <el-dropdown>
           <span class="el-dropdown-link">
@@ -20,17 +21,73 @@
             <el-dropdown-item>通知</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-        <nuxt-link class="login_link" to="/user/login">登录 / 注册</nuxt-link>
+
+        <nuxt-link class="login_link" to="/user/login/0">
+          <div v-if="userinfo.token" class="login_user" >
+            <el-dropdown>
+              <div class="el-dropdown-link">
+                <img :src="$axios.defaults.baseURL+userinfo.user.defaultAvatar" alt />
+                <span>{{userinfo.user.nickname}}</span>
+                <i class="el-icon-caret-bottom"></i>
+              </div>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item>个人中心</el-dropdown-item>
+                <el-dropdown-item>
+                  <div @click="handleLogout">退出</div>
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </div>
+          <div v-else class="login_text"
+          >登录 / 注册</div>
+        </nuxt-link>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-export default {};
+export default {
+  computed: {
+    userinfo() {
+      return this.$store.state.user.userinfo
+    }
+  },
+  mounted() {
+    let userStr = localStorage.getItem('userinfo')
+    if (userStr) {
+      //存在
+      let userinfo = JSON.parse(userStr);
+      //把值设置给vuex
+      this.$store.commit('user/setUser', userinfo)
+    }
+  },
+  methods: {
+    handleLogout() {
+      //1.删除vuex中的用户信息
+      //2.删除本地存储的数据
+
+      this.$store.commit('user/setUser', { token: '', user: {} })
+      localStorage.removeItem('userinfo')
+      this.$message.success('退出成功')
+
+      this.$router.push('/user/login/0')
+    }
+  }
+
+}
 </script>
 
 <style lang="less" scoped>
+.login_user {
+  .el-dropdown-link {
+    img {
+      width: 36px;
+    }
+    display: flex;
+    align-items: center;
+  }
+}
 .header {
   border-bottom: 1px solid #ccc;
   a {
@@ -89,6 +146,9 @@ export default {};
     display: flex;
     align-items: center;
     justify-content: center;
+    span {
+      cursor: pointer;
+    }
     .login_link {
       font-size: 13px;
       color: #666;
