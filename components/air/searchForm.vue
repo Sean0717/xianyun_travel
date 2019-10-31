@@ -80,6 +80,8 @@ export default {
             console.log(res);
             let cityArr = res.data.data
             cityArr.forEach(v => {
+              //把市 字去掉 因为后台不需要 '市'字
+              v.name=v.name.replace('市','');
               v.value = v.name
             });
             callback(cityArr)
@@ -112,6 +114,8 @@ export default {
     // 4.点击搜索
     searchTicket() {
       //做一个表单验证
+      console.log(this.$router);
+
       this.$router.push({ path: "/air/flights", query: this.form })
     }
   }
