@@ -1,18 +1,22 @@
 <template>
   <div class="flights_item">
-
-     <div class="item_main">
-      <div class="item_name">上航FM9316</div>
+    <div class="item_main">
+      <div class="item_name">{{data.airline_name}}{{data.flight_no}}</div>
       <div class="item_depart_date">
-        <p>19:30</p>
-        <p>白云机场T1</p>
+        <p>{{data.dep_time}}</p>
+        <p>{{data.org_airport_name}}{{data.arg_airport_quay}}</p>
       </div>
-      <div class="duration">2时20分</div>
+      <div class="duration">{{duration}}</div>
       <div class="item_dest_date">
-        <p>19:30</p>
-        <p>白云机场T1</p>
+        <p>{{data.arr_time}}</p>
+        <p>{{data.dst_airport_name}}{{data.dst_airport_quay}}</p>
       </div>
-      <div class="item_price"><p>￥<span>800</span>起</p></div>
+      <div class="item_price">
+        <p>
+          ￥
+          <span>{{data.base_price*0.3}}</span>起
+        </p>
+      </div>
     </div>
     <div class="item_info">
       <div class="item_low">低价推荐</div>
@@ -20,41 +24,59 @@
         <!-- 循环来显示 -->
         <div class="seat_row">
           <div class="seat_row_name">
-            <span>经济舱 </span> | 上海一诺千金航空服务有限公司
+            <span>{{item.name}}</span> | {{item.supplierName}}
           </div>
-          <div class="seat_row_price">$1999</div>
+          <div class="seat_row_price">${{item.settle_price}}</div>
           <div class="seat_row_btns">
             <div>
-              <el-button type="warning"  size="mini" >选定</el-button>
-              <p>剩余:99</p>
+              <el-button type="warning" size="mini">选定</el-button>
+              <p>剩余{{item.discount}}</p>
             </div>
           </div>
         </div>
-
-
-        </div>
       </div>
     </div>
-
+  </div>
 </template>
 
 <script>
 export default {
+  props:{
+    data:{
+      type:Object,
+      default:{}
+    }
+  },
+  computed:{
+    duration(){
+      let startTime=this.data.dep_datetime
+      let endTime=this.data.arr_datetime
+      let startDate=new Date(startTime)
+      let endDate=new Date(endTime)
 
+      let duration=endDate-startDate;
+
+      let hour=parseInt(duration/1000/60/60)
+      let minutes=duration/1000/60-hour*60
+
+      return `${hour}时${minutes}分`
+
+    }
+  }
 }
 </script>
 
 <style lang="less" scoped>
-  /* css tree  */
+/* css tree  */
 .flights_item {
-  border:1px solid #ccc;
-  margin:10px 0;
+  border: 1px solid #ccc;
+  margin: 10px 0;
   .item_main {
     height: 80px;
     background-color: #fff;
     display: flex;
     position: relative;
-    >div{
+    > div {
       flex: 1;
       display: flex;
       justify-content: center;
@@ -64,7 +86,8 @@ export default {
     .item_name {
       font-size: 13px;
     }
-    .item_depart_date,.item_dest_date {
+    .item_depart_date,
+    .item_dest_date {
       p:nth-child(1) {
         font-size: 25px;
       }
@@ -79,11 +102,11 @@ export default {
         font-size: 20px;
       }
     }
-    .duration{
+    .duration {
       position: absolute;
       top: 50%;
       left: 50%;
-      transform: translate(-50%,-50%);
+      transform: translate(-50%, -50%);
       font-size: 12px;
       color: #666;
       padding-bottom: 20px;
@@ -91,7 +114,7 @@ export default {
     }
   }
   .item_info {
-     background-color: #f6f6f6;
+    background-color: #f6f6f6;
     display: flex;
     .item_low {
       flex: 1;
@@ -106,7 +129,7 @@ export default {
         height: 70px;
         display: flex;
         border-bottom: 1px solid #000;
-        &:last-child{
+        &:last-child {
           border-bottom: none;
         }
         > div {
@@ -117,7 +140,7 @@ export default {
         .seat_row_name {
           flex: 4;
           font-size: 13px;
-          span{
+          span {
             color: green;
           }
         }
@@ -133,6 +156,5 @@ export default {
       }
     }
   }
-  }
-
+}
 </style>

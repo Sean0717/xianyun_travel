@@ -2,7 +2,8 @@
   <div class="flights">
     <!-- main部分开始 -->
     <div class="main">
-      <!-- 筛选模块 -->
+      <!-- 筛选模块开始 -->
+
       <FlightsFilter />
       <!-- 筛选模块结束 -->
       <!-- 2 表单的头部 开始 -->
@@ -15,8 +16,9 @@
       <!-- 2 表单的头部 结束 -->
 
       <!-- 机票列表开始 -->
-      <FlightsItem />
-      <FlightsItem />
+      <div class="air_list">
+        <FlightsItem v-for="item in flightsData.flights" :key="item.id" :data="item" />
+      </div>
       <!-- 机票列表结束 -->
     </div>
     <!-- main部分结束 -->
@@ -33,11 +35,30 @@ import FlightsItem from '@/components/air/flightsItem.vue'
 export default {
   data() {
     return {
-
+      flightsData:{
+        //机票列表的数组
+        flights:[],
+        info:{},
+        options:{}
+      }
     }
   },
   components: {
      FlightsItem, FlightsFilter
+      },
+      methods:{
+        //获取机票数据
+        getList(){
+        let form=this.$route.query
+        this.$axios.get('/airs',{params:form})
+        .then(res=>{
+          console.log(res)
+          this.flightsData=res.data
+        })
+      }
+      },
+      mounted(){
+       this.getList()
       }
 }
 </script>
