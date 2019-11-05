@@ -15,13 +15,38 @@
       </div>
       <!-- 2 表单的头部 结束 -->
 
-      <!-- 机票列表开始 -->
+      <!--3. 机票列表开始 -->
       <div class="air_list">
-        <FlightsItem v-for="item in flightsData.flights" :key="item.id" :data="item" />
+        <FlightsItem v-for="(item) in currentFlights" :key="item.id" :data="item"/>
       </div>
       <!-- 机票列表结束 -->
+
+        <!--4. 底部分页开始 -->
+
+
+         <!-- :current-page  当前的页码
+          :page-sizes= 页容量 数组
+          :page-size  当前 页容量
+          @size-change 页容量改变事件
+          @current-change 页码改变事件-->
+    <div class="changePages">
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="page.currentPage"
+        :page-sizes="page.pageSizeArr"
+        :page-size="page.pageSizes"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="page.total"
+      ></el-pagination>
     </div>
-    <!-- main部分结束 -->
+    <!-- 底部分页结束 -->
+    </div>
+      <!-- main部分结束 -->
+
+
+
+
 
     <!-- 侧边栏开始 -->
     <div class="flights_aside">侧边栏</div>
@@ -35,35 +60,106 @@ import FlightsItem from '@/components/air/flightsItem.vue'
 export default {
   data() {
     return {
-      flightsData:{
+      flightsData: {
         //机票列表的数组
-        flights:[],
-        info:{},
-        options:{}
+        flights: [],
+        info: {},
+        options: {}
+      },
+      //被分页后的当前机票列表
+      currentFlights:[],
+      //分页对象
+      page:{
+        //当前页码
+        currentPage:1,
+        //页容量
+        pageSizes:10,
+        //页容量数组
+        pageSizeArr:[1,2,5,10,20,100],
+        //总条数
+        total:1
       }
     }
   },
   components: {
-     FlightsItem, FlightsFilter
-      },
-      methods:{
-        //获取机票数据
-        getList(){
-        let form=this.$route.query
-        this.$axios.get('/airs',{params:form})
-        .then(res=>{
+    FlightsItem, FlightsFilter
+  },
+  methods: {
+    //获取机票数据
+    getList() {
+      let form = this.$route.query
+      this.$axios.get('/airs', { params: form })
+        .then(res => {
           console.log(res)
-          this.flightsData=res.data
+          //定义过滤后的数组
+          this.flightsData = res.data
+          this.page.total=this.flightsData.total//等于从后台获取到的数据总数
+
+           // 需要实现 数组分页  this.flightsData.flights
+        // 记公式
+        // let list =totalList.slice()使用它
+
+        // let list =totalList.slice(
+        // (当前的页码-1)*当前的页容量 ),
+        // 当前的页码* 当前的页容量
+        // )
+
+        this.currentFlights=this.flightsData.flights.slice(
+          // //页码2  页容量是10  第二页
+          // //第10条开始 20
+          (this.page.currentPage-1)*this.page.pageSizes,
+          //20
+          this.page.currentPage*this.page.pageSizes
+// 0,8
+
+        )
+        console.log(this.currentFlights)
+        //  console.log(this.currentFlights)
         })
-      }
-      },
-      mounted(){
-       this.getList()
-      }
+    },
+    //页容量改变事件
+   handleSizeChange(value){
+     //value 就是你选择的 页容量 你的值
+      console.log(value);
+
+      this.page.pageSizes=value
+
+      this.currentFlights=this.flightsData.flights.slice(
+           (this.page.currentPage-1)*this.page.pageSizes,//0
+          //20
+          this.page.currentPage*this.page.pageSizes//2
+
+      )
+
+   },
+   //当前页码改变事件
+    handleCurrentChange(value){
+        //选择后的当前页码
+        console.log(value);
+
+        this.page.currentPage=value
+
+        this.currentFlights=this.flightsData.flights.slice(
+           (this.page.currentPage-1)*this.page.pageSizes,
+          //20
+          this.page.currentPage*this.page.pageSizes//2
+        )
+    }
+
+  },
+  mounted() {
+    this.getList()
+  }
 }
 </script>
 
 <style lang="less" scoped>
+
+  .changePages{
+    display: flex;
+    justify-content:center;
+    margin-top: 15px;
+  }
 .flights {
   width: 1000px;
   margin: 0 auto;

@@ -1,6 +1,6 @@
 <template>
   <div class="flights_item">
-    <div class="item_main">
+    <div class="item_main" @click="isShow=!isShow">
       <div class="item_name">{{data.airline_name}}{{data.flight_no}}</div>
       <div class="item_depart_date">
         <p>{{data.dep_time}}</p>
@@ -18,11 +18,11 @@
         </p>
       </div>
     </div>
-    <div class="item_info">
+    <div class="item_info" v-show="isShow">
       <div class="item_low">低价推荐</div>
       <div class="item_seat">
         <!-- 循环来显示 -->
-        <div class="seat_row">
+        <div class="seat_row" v-for="(item,index) in data.seat_infos" :key="index" >
           <div class="seat_row_name">
             <span>{{item.name}}</span> | {{item.supplierName}}
           </div>
@@ -47,6 +47,11 @@ export default {
       default:{}
     }
   },
+  data(){
+    return {
+    isShow:false
+    }
+  },
   computed:{
     duration(){
       let startTime=this.data.dep_datetime
@@ -69,6 +74,7 @@ export default {
 <style lang="less" scoped>
 /* css tree  */
 .flights_item {
+  cursor: pointer;
   border: 1px solid #ccc;
   margin: 10px 0;
   .item_main {

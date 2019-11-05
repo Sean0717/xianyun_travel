@@ -6,7 +6,7 @@
           <img src="http://157.122.54.189:9093/images/logo.jpg" alt />
         </nuxt-link>
         <nuxt-link class="pages_item" to="/">首页</nuxt-link>
-        <nuxt-link class="pages_item" to="/plan">旅游攻略</nuxt-link>
+        <nuxt-link class="pages_item" to="/post">旅游攻略</nuxt-link>
         <nuxt-link class="pages_item" to="/hotel">酒店</nuxt-link>
         <nuxt-link class="pages_item" to="/air">国内机票</nuxt-link>
       </div>
